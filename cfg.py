@@ -25,8 +25,8 @@ class BasicBlock:
 
     def __repr__(self):
         return f'{self.label}:\n' + \
-                ''.join( [ f'{phi}\n' for phi in self.phi_functions ] ) + \
-                ''.join( [ f'{i}\n'   for i   in self.instructions  ] )
+                ''.join( [ f'\t{phi}\n' for phi in self.phi_functions ] ) + \
+                ''.join( [ f'\t{i}\n'   for i   in self.instructions  ] )
 
 class ControlFlowGraph:
     def __init__(self, header, footer):
