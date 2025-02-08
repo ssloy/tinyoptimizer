@@ -2,8 +2,6 @@ import io, sys
 from lexer import WendLexer
 from parser import WendParser
 from analyzer import *
-#from transasm import *
-#from transllvm import *
 from ir import ir
 
 if len(sys.argv)!=2:

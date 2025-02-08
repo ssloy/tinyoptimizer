@@ -103,25 +103,25 @@ def stat(n, cfg):
             stat(n.expr, cfg)
             label1 = LabelFactory.cur_label()
             label2 = LabelFactory.new_label()
-            cfg.last.instructions += [ Instruction('br i1 %{a}, label %' + label2 + '.then, label %' + label2 + '.else', None, label1) ]
+            cfg.last.instructions += [ Instruction('br i1 %{a}, label %{b}, label %{c}', None, label1, label2 + '.then', label2 + '.else') ]
             cfg.add_block(label2 + '.then')
             for s in n.ibody:
                 stat(s, cfg)
-            cfg.last.instructions += [ Instruction('br label %' + label2 + '.end') ] # TODO unbake labels
+            cfg.last.instructions += [ Instruction('br label %{a}', None, label2 + '.end') ]
             cfg.add_block(label2 + '.else')
             for s in n.ebody:
                 stat(s, cfg)
-            cfg.last.instructions += [ Instruction('br label %' + label2 + '.end') ]
+            cfg.last.instructions += [ Instruction('br label %{a}', None, label2 + '.end') ]
             cfg.add_block(label2 + '.end')
         case While():
             label = LabelFactory.new_label()
-            cfg.last.instructions += [ Instruction('br label %' + label + '.cond') ]
+            cfg.last.instructions += [ Instruction('br label %{a}', None, label + '.cond') ]
             cfg.add_block(label + '.cond')
             stat(n.expr, cfg)
-            cfg.last.instructions += [ Instruction('br i1 %{a}, label %' + label + '.body, label %' + label + '.end', None, LabelFactory.cur_label()) ]
+            cfg.last.instructions += [ Instruction('br i1 %{a}, label %{b}, label %{c}', None, LabelFactory.cur_label(), label + '.body', label + '.end') ]
             cfg.add_block(label + '.body')
             for s in n.body:
                 stat(s, cfg)
-            cfg.last.instructions += [ Instruction('br label %' + label + '.cond') ]
+            cfg.last.instructions += [ Instruction('br label %{a}', None, label + '.cond') ]
             cfg.add_block(label + '.end')
         case other: raise Exception('Unknown instruction', n)
