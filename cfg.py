@@ -1,9 +1,9 @@
 class Instruction:
-    def __init__(self, string, t=None, a=None, b=None, c=None):
-        self.string, self.t, self.a, self.b, self.c = string, t, a, b, c # string, type and three parameters
+    def __init__(self, string, *args):
+        self.string, self.op = string, args # string and (typically three) parameters
 
     def __repr__(self):
-        return self.string.format(a=self.a, b=self.b, c=self.c, t=self.t)
+        return self.string.format(op = self.op)
 
 class Phi:
     def __init__(self, reg, choice=None):

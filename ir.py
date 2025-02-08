@@ -42,9 +42,13 @@ def fun(n, ir):
     cfg = ControlFlowGraph(f'define {rettype} @{label}({args}) {{', f'\t{retval}\n}}')
     cfg.add_block('0')
     for v in n.args + n.var:
-        cfg.last.instructions += [ Instruction('%{a} = alloca {t}', lltype(v.deco['type']), v.deco['fullname']) ]
+        t = lltype(v.deco['type'])
+        v = v.deco['fullname']
+        cfg.last.instructions += [ Instruction(f'%{{op[0]}} = alloca {t}', v) ]
     for v in n.args:
-        cfg.last.instructions += [ Instruction('store {t} %{a}.arg, {t}* %{a}', lltype(v.deco['type']), v.deco['fullname']) ]
+        t = lltype(v.deco['type'])
+        v = v.deco['fullname']
+        cfg.last.instructions += [ Instruction(f'store {t} %{{op[0]}}, {t}* %{{op[1]}}', f'{v}.arg', v) ]
     for f in n.fun: fun(f, ir)
     for s in n.body: stat(s, cfg)
     ir.fun.append(cfg)
@@ -55,73 +59,84 @@ def stat(n, cfg):
             match n.expr.deco['type']:
                 case Type.INT:
                     stat(n.expr, cfg)
-                    cfg.last.instructions += [ Instruction('call i32 (i8*, ...)* @printf(ptr @integer, i32 %{a})', 'i32', LabelFactory.cur_label()) ]
+                    cfg.last.instructions += [ Instruction('call i32 (i8*, ...)* @printf(ptr @integer, i32 %{op[0]})', LabelFactory.cur_label()) ]
                 case Type.BOOL:
                     stat(n.expr, cfg)
-                    cfg.last.instructions += [ Instruction('%{a}.offset = select i1 %{a}, i32 6, i32 0', None, LabelFactory.cur_label()),
-                                               Instruction('%{a}.ptr = getelementptr [11 x i8], ptr @bool, i32 0, i32 %{a}.offset', None, LabelFactory.cur_label()),
-                                               Instruction('call i32 (i8*, ...) @printf(ptr %{a}.ptr)', None, LabelFactory.cur_label()) ]
+                    label1 = LabelFactory.cur_label()
+                    label2 = LabelFactory.new_label()
+                    cfg.last.instructions += [ Instruction(f'%{label2}.offset = select i1 %{{op[0]}}, i32 6, i32 0', label1),
+                                               Instruction(f'%{label2}.ptr = getelementptr [11 x i8], ptr @bool, i32 0, i32 %{label2}.offset'),
+                                               Instruction(f'call i32 (i8*, ...) @printf(ptr %{label2}.ptr)') ]
                 case Type.STRING:
-                    cfg.last.instructions += [ Instruction('call i32 (i8*, ...) @printf(ptr @string, ptr @{a})', None, n.expr.deco['label']) ]
+                    label = n.expr.deco['label']
+                    cfg.last.instructions += [ Instruction(f'call i32 (i8*, ...) @printf(ptr @string, ptr @{label})') ]
                 case other: raise Exception('Unknown expression type', n.expr)
             if n.newline:
                 cfg.last.instructions += [ Instruction('call i32 (i8*, ...) @printf(ptr @newline)') ]
         case Return():
             if n.expr:
                 stat(n.expr, cfg)
-                cfg.last.instructions += [ Instruction('ret {t} %{a}', lltype(n.expr.deco['type']), LabelFactory.cur_label()) ]
+                t = lltype(n.expr.deco['type'])
+                cfg.last.instructions += [ Instruction(f'ret {t} %{{op[0]}}', LabelFactory.cur_label()) ]
             else:
                 pass
                 cfg.last.instructions += [ Instruction('ret void') ]
         case Assign():
             stat(n.expr, cfg)
-            cfg.last.instructions += [ Instruction('store {t} %{a}, {t}* %{b}', lltype(n.deco['type']), LabelFactory.cur_label(), n.deco['fullname']) ]
+            t = lltype(n.deco['type'])
+            cfg.last.instructions += [ Instruction(f'store {t} %{{op[0]}}, {t}* %{{op[1]}}', LabelFactory.cur_label(), n.deco['fullname']) ]
         case Integer():
-            cfg.last.instructions += [ Instruction('%{a} = add i32 0, {b}', None, LabelFactory.new_label(), n.value) ] # TODO need to decide whether n.value is int or string
+            cfg.last.instructions += [ Instruction('%{op[0]} = add i32 {op[1]}, {op[2]}', LabelFactory.new_label(), 0, n.value) ]
         case Boolean():
-            cfg.last.instructions += [ Instruction('%{a} = or i1 0, {b}', None, LabelFactory.new_label(), int(n.value)) ]
+            cfg.last.instructions += [ Instruction('%{op[0]} = or i1 {op[1]}, {op[2]}', LabelFactory.new_label(), 0, int(n.value)) ]
         case Var():
-            cfg.last.instructions += [ Instruction('%{a} = load {t}, {t}* %{b}', 'i1' if n.deco['type']==Type.BOOL else 'i32', LabelFactory.new_label(), n.deco["fullname"]) ]
+            t = lltype(n.deco['type'])
+            cfg.last.instructions += [ Instruction(f'%{{op[0]}} = load {t}, {t}* %{{op[1]}}', LabelFactory.new_label(), n.deco['fullname']) ]
         case ArithOp() | LogicOp():
             stat(n.left, cfg)
             left = LabelFactory.cur_label()
             stat(n.right, cfg)
             right = LabelFactory.cur_label()
+            t = lltype(n.left.deco['type'])
             op = {'+':'add', '-':'sub', '*':'mul', '/':'sdiv', '%':'srem','||':'or', '&&':'and','<=':'icmp sle', '<':'icmp slt', '>=':'icmp sge', '>':'icmp sgt', '==':'icmp eq', '!=':'icmp ne'}[n.op]
-            cfg.last.instructions += [ Instruction('%{a} = ' + op + ' {t} %{b}, %{c}', lltype(n.left.deco['type']), LabelFactory.new_label(), left, right) ]
+            cfg.last.instructions += [ Instruction(f'%{{op[0]}} = {op} {t} %{{op[1]}}, %{{op[2]}}', LabelFactory.new_label(), left, right) ]
         case FunCall():
-            args = []
+            pointers = ', '.join([ '{ptype}* %{pname}'.format(ptype=lltype(ptype), pname=pname) for pname, ptype in n.deco['nonlocal'] ]) # external variable pointers
+            argline = ', '.join(['{t} %{{op[{cnt}]}}'.format(t=lltype(e.deco['type']), cnt=str(cnt)) for cnt,e in enumerate(n.args) ])    # actual function arguments
+            if pointers and argline: pointers += ', '
+            argnames = []
             for e in n.args:
                 stat(e, cfg)
-                args.append(lltype(e.deco['type']) + ' %' + LabelFactory.cur_label())
-            args = ', '.join([ '{t}* %{n}'.format(n = a[0], t = lltype(a[1])) for a in n.deco['nonlocal'] ] + args) # external variable pointers + actual function parameters
+                argnames.append(LabelFactory.cur_label())
+            offset = len(argnames)
             if n.deco['type']==Type.VOID:
-                cfg.last.instructions += [ Instruction('call void @{a}(' + args + ')', None, n.deco['label']) ] # TODO mem2reg won't work if args are baked into the instruction
+                cfg.last.instructions += [ Instruction(f'call void @{{op[{offset}]}}({pointers}{argline})', *argnames, n.deco['label']) ]
             else:
-                cfg.last.instructions += [ Instruction('%{a} = call {t} @{b}(' + args + ')', lltype(n.deco['type']), LabelFactory.new_label(), n.deco['label']) ]
+                t = lltype(n.deco['type'])
+                cfg.last.instructions += [ Instruction(f'%{{op[{offset}]}} = call {t} @{{op[{offset+1}]}}({pointers}{argline})', *argnames, LabelFactory.new_label(), n.deco['label']) ]
         case IfThenElse():
             stat(n.expr, cfg)
             label1 = LabelFactory.cur_label()
             label2 = LabelFactory.new_label()
-            cfg.last.instructions += [ Instruction('br i1 %{a}, label %{b}, label %{c}', None, label1, label2 + '.then', label2 + '.else') ]
+            cfg.last.instructions += [ Instruction('br i1 %{op[0]}, label %{op[1]}, label %{op[2]}', label1, label2 + '.then', label2 + '.else') ]
             cfg.add_block(label2 + '.then')
             for s in n.ibody:
                 stat(s, cfg)
-            cfg.last.instructions += [ Instruction('br label %{a}', None, label2 + '.end') ]
+            cfg.last.instructions += [ Instruction('br label %{op[0]}', label2 + '.end') ]
             cfg.add_block(label2 + '.else')
             for s in n.ebody:
                 stat(s, cfg)
-            cfg.last.instructions += [ Instruction('br label %{a}', None, label2 + '.end') ]
+            cfg.last.instructions += [ Instruction('br label %{op[0]}', label2 + '.end') ]
             cfg.add_block(label2 + '.end')
         case While():
             label = LabelFactory.new_label()
-            cfg.last.instructions += [ Instruction('br label %{a}', None, label + '.cond') ]
+            cfg.last.instructions += [ Instruction('br label %{op[0]}', label + '.cond') ]
             cfg.add_block(label + '.cond')
             stat(n.expr, cfg)
-            cfg.last.instructions += [ Instruction('br i1 %{a}, label %{b}, label %{c}', None, LabelFactory.cur_label(), label + '.body', label + '.end') ]
+            cfg.last.instructions += [ Instruction('br i1 %{op[0]}, label %{op[1]}, label %{op[2]}', LabelFactory.cur_label(), label + '.body', label + '.end') ]
             cfg.add_block(label + '.body')
             for s in n.body:
                 stat(s, cfg)
-            cfg.last.instructions += [ Instruction('br label %{a}', None, label + '.cond') ]
+            cfg.last.instructions += [ Instruction('br label %{op[0]}', label + '.cond') ]
             cfg.add_block(label + '.end')
         case other: raise Exception('Unknown instruction', n)
