@@ -31,7 +31,7 @@ def fun(n, ir):
     args    = ', '.join([ '{t}* %{n}'   .format(n = a[0], t = lltype(a[1])) for a in n.deco['nonlocal'] ] +
                         [ '{t} %{n}.arg'.format(n = a.deco['fullname'], t = lltype(a.deco['type'])) for a in n.args ])
     rettype = lltype(n.deco['type'])
-    cfg = ControlFlowGraph(f'define {rettype} @{label}({args}) {{', f'}}')
+    cfg = ControlFlowGraph(f'define {rettype} @{label}({args}) {{', '}')
     cfg.add_block('entry')
     for v in n.args:
         cfg.last.instructions += [ Instruction('%{{op[0]}} = alloca {t}'.format(t=lltype(v.deco['type'])), v.deco['fullname']) ]
@@ -39,7 +39,6 @@ def fun(n, ir):
     for v in n.var:
         cfg.last.instructions += [ Instruction('%{{op[0]}} = alloca {t}'.format(t=lltype(v.deco['type'])), v.deco['fullname']) ]
         cfg.last.instructions += [ Instruction('store {t} {{op[0]}}, {t}* %{{op[1]}}'.format(t=lltype(v.deco['type'])), 0, v.deco['fullname']) ] # zero initialized variables
-
     for f in n.fun: fun(f, ir)
     for s in n.body: stat(s, cfg)
     cfg.last.instructions += [ Instruction('ret void' if n.deco['type']==Type.VOID else 'unreachable') ]

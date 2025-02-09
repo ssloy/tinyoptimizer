@@ -25,8 +25,8 @@ class BasicBlock:
 
     def __repr__(self):
         return f'{self.label}:\n' + \
-                ''.join( [ f'\t{phi}\n' for phi in self.phi_functions ] ) + \
-                ''.join( [ f'\t{i}\n'   for i   in self.instructions  ] )
+                ''.join([ f'\t{phi}\n' for phi in self.phi_functions ]) + \
+                ''.join([ f'\t{i}\n'   for i   in self.instructions  ])
 
 class ControlFlowGraph:                  # a control flow graph is made of basic blocks and
     def __init__(self, header, footer):  # header + footer strings to form a valid LLVM IR program
@@ -38,8 +38,12 @@ class ControlFlowGraph:                  # a control flow graph is made of basic
 
     def __repr__(self):
         return f'{self.header}\n' + \
-               ''.join( [ f'{block}' for block in self.blocks.values() ] ) + \
+               ''.join([ f'{block}' for block in self.blocks.values() ]) + \
                f'{self.footer}\n'
+
+    def find_and_replace(self, find, replace):
+        for b in self.blocks.values():
+            b.find_and_replace(find, replace)
 
     def compute_adjacency(self):
         for b1 in self.blocks.values():

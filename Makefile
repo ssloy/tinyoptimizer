@@ -53,3 +53,6 @@ clean:
 	rm -rf $(BUILDDIR)
 	find . -type f -name *.pyc -delete
 	find . -type d -name __pycache__ -delete
+	rm -f *png
+	rm -f *ll
+	rm -f *dot
