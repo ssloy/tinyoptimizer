@@ -1,0 +1,17 @@
+main() {
+    int collatz(int n) {
+        int its;
+
+        its = 0;
+        while (n != 1) {
+            its = its + 1;
+            if (n % 2 == 0) {
+                n = n / 2;
+            } else {
+                n = 3*n + 1;
+            }
+        }
+        return its;
+    }
+    println collatz(27);
+}
