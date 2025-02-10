@@ -1,0 +1,5 @@
+digraph "CFG for 'main_uniqstr2' function" {
+	label="CFG for 'main_uniqstr2' function";
+
+	Node0x561809406120 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{entry:\l  %uniqstr26 = add i32 0, 27\l  %uniqstr27 = call i32 @collatz_uniqstr1(i32 %uniqstr26)\l  %0 = call ptr @printf(ptr @integer, i32 %uniqstr27)\l  %1 = call i32 (ptr, ...) @printf(ptr @newline)\l  ret void\l}"];
+}

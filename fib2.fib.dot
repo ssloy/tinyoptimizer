@@ -1,0 +1,19 @@
+digraph "CFG for 'fib' function" {
+	label="CFG for 'fib' function";
+
+	Node0x564679083c40 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#dedcdb70",label="{entry:\l  %cmp = icmp eq i32 %n, 0\l  br i1 %cmp, label %if.then, label %if.end\l|{<s0>T|<s1>F}}"];
+	Node0x564679083c40:s0 -> Node0x564679084350;
+	Node0x564679083c40:s1 -> Node0x5646790843c0;
+	Node0x564679084350 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#aec9fc70",label="{if.then:                                          \l  br label %return\l}"];
+	Node0x564679084350 -> Node0x564679084540;
+	Node0x5646790843c0 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#c7d7f070",label="{if.end:                                           \l  br label %while.cond\l}"];
+	Node0x5646790843c0 -> Node0x564679084620;
+	Node0x564679084620 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{while.cond:                                       \l  %a_while.cond = phi i32 [ 0, %if.end ], [ %b_while.cond, %while.body ]\l  %b_while.cond = phi i32 [ 1, %if.end ], [ %add, %while.body ]\l  %i_while.cond = phi i32 [ 1, %if.end ], [ %add2, %while.body ]\l  %c_while.cond = phi i32 [ 0, %if.end ], [ %b_while.cond, %while.body ]\l  %cmp1 = icmp slt i32 %i_while.cond, %n\l  br i1 %cmp1, label %while.body, label %while.end\l|{<s0>T|<s1>F}}"];
+	Node0x564679084620:s0 -> Node0x564679084770;
+	Node0x564679084620:s1 -> Node0x564679084e60;
+	Node0x564679084770 [shape=record,color="#b70d28ff", style=filled, fillcolor="#bb1b2c70",label="{while.body:                                       \l  %add = add i32 %a_while.cond, %b_while.cond\l  %add2 = add i32 %i_while.cond, 1\l  br label %while.cond\l}"];
+	Node0x564679084770 -> Node0x564679084620;
+	Node0x564679084e60 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#c7d7f070",label="{while.end:                                        \l  br label %return\l}"];
+	Node0x564679084e60 -> Node0x564679084540;
+	Node0x564679084540 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#dedcdb70",label="{return:                                           \l  %retval_return = phi i32 [ 0, %if.then ], [ %b_while.cond, %while.end ]\l  %a_return = phi i32 [ 0, %if.then ], [ %a_while.cond, %while.end ]\l  %b_return = phi i32 [ 1, %if.then ], [ %b_while.cond, %while.end ]\l  %i_return = phi i32 [ 1, %if.then ], [ %i_while.cond, %while.end ]\l  %c_return = phi i32 [ 0, %if.then ], [ %c_while.cond, %while.end ]\l  ret i32 %retval_return\l}"];
+}

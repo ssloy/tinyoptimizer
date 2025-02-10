@@ -1,0 +1,19 @@
+digraph "CFG for 'fib' function" {
+	label="CFG for 'fib' function";
+
+	Node0x555a019a4900 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#dedcdb70",label="{entry:\l  %cmp = icmp eq i32 %n, 0\l  br i1 %cmp, label %if.then, label %if.end\l|{<s0>T|<s1>F}}"];
+	Node0x555a019a4900:s0 -> Node0x555a019a66e0;
+	Node0x555a019a4900:s1 -> Node0x555a019a6750;
+	Node0x555a019a66e0 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#aec9fc70",label="{if.then:                                          \l  br label %return\l}"];
+	Node0x555a019a66e0 -> Node0x555a019a68d0;
+	Node0x555a019a6750 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#c7d7f070",label="{if.end:                                           \l  br label %while.cond\l}"];
+	Node0x555a019a6750 -> Node0x555a019a69b0;
+	Node0x555a019a69b0 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{while.cond:                                       \l  %i.0 = phi i32 [ 1, %if.end ], [ %add2, %while.body ]\l  %b.0 = phi i32 [ 1, %if.end ], [ %add, %while.body ]\l  %a.0 = phi i32 [ 0, %if.end ], [ %b.0, %while.body ]\l  %cmp1 = icmp slt i32 %i.0, %n\l  br i1 %cmp1, label %while.body, label %while.end\l|{<s0>T|<s1>F}}"];
+	Node0x555a019a69b0:s0 -> Node0x555a019a6b20;
+	Node0x555a019a69b0:s1 -> Node0x555a019a6f40;
+	Node0x555a019a6b20 [shape=record,color="#b70d28ff", style=filled, fillcolor="#bb1b2c70",label="{while.body:                                       \l  %add = add nsw i32 %a.0, %b.0\l  %add2 = add nsw i32 %i.0, 1\l  br label %while.cond, !llvm.loop !2\l}"];
+	Node0x555a019a6b20 -> Node0x555a019a69b0;
+	Node0x555a019a6f40 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#c7d7f070",label="{while.end:                                        \l  br label %return\l}"];
+	Node0x555a019a6f40 -> Node0x555a019a68d0;
+	Node0x555a019a68d0 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#dedcdb70",label="{return:                                           \l  %retval.0 = phi i32 [ 0, %if.then ], [ %b.0, %while.end ]\l  ret i32 %retval.0\l}"];
+}

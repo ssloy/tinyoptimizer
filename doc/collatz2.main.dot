@@ -1,0 +1,5 @@
+digraph "CFG for 'main' function" {
+	label="CFG for 'main' function";
+
+	Node0x561809403a20 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%0:\l  call void @main_uniqstr2()\l  ret i32 0\l}"];
+}

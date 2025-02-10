@@ -1,0 +1,20 @@
+digraph "CFG for 'collatz_uniqstr1' function" {
+	label="CFG for 'collatz_uniqstr1' function";
+
+	Node0x5618094045a0 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#b9d0f970",label="{entry:\l  %uniqstr3 = add i32 0, 0\l  br label %uniqstr4.cond\l}"];
+	Node0x5618094045a0 -> Node0x561809404650;
+	Node0x561809404650 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{uniqstr4.cond:                                    \l  %collatz_uniqstr1.n_uniqstr4.cond = phi i32 [ %collatz_uniqstr1.n.arg,\l... %entry ], [ %collatz_uniqstr1.n_uniqstr16.end, %uniqstr16.end ]\l  %collatz_uniqstr1.its_uniqstr4.cond = phi i32 [ %uniqstr3, %entry ], [\l... %uniqstr10, %uniqstr16.end ]\l  %uniqstr6 = add i32 0, 1\l  %uniqstr7 = icmp ne i32 %collatz_uniqstr1.n_uniqstr4.cond, %uniqstr6\l  br i1 %uniqstr7, label %uniqstr4.body, label %uniqstr4.end\l|{<s0>T|<s1>F}}"];
+	Node0x561809404650:s0 -> Node0x561809404c50;
+	Node0x561809404650:s1 -> Node0x561809404d00;
+	Node0x561809404c50 [shape=record,color="#b70d28ff", style=filled, fillcolor="#bb1b2c70",label="{uniqstr4.body:                                    \l  %uniqstr9 = add i32 0, 1\l  %uniqstr10 = add i32 %collatz_uniqstr1.its_uniqstr4.cond, %uniqstr9\l  %uniqstr12 = add i32 0, 2\l  %uniqstr13 = srem i32 %collatz_uniqstr1.n_uniqstr4.cond, %uniqstr12\l  %uniqstr14 = add i32 0, 0\l  %uniqstr15 = icmp eq i32 %uniqstr13, %uniqstr14\l  br i1 %uniqstr15, label %uniqstr16.then, label %uniqstr16.else\l|{<s0>T|<s1>F}}"];
+	Node0x561809404c50:s0 -> Node0x5618094049c0;
+	Node0x561809404c50:s1 -> Node0x561809405420;
+	Node0x5618094049c0 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#e1675170",label="{uniqstr16.then:                                   \l  %uniqstr18 = add i32 0, 2\l  %uniqstr19 = sdiv i32 %collatz_uniqstr1.n_uniqstr4.cond, %uniqstr18\l  br label %uniqstr16.end\l}"];
+	Node0x5618094049c0 -> Node0x561809404820;
+	Node0x561809405420 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#e1675170",label="{uniqstr16.else:                                   \l  %uniqstr20 = add i32 0, 3\l  %uniqstr22 = mul i32 %uniqstr20, %collatz_uniqstr1.n_uniqstr4.cond\l  %uniqstr23 = add i32 0, 1\l  %uniqstr24 = add i32 %uniqstr22, %uniqstr23\l  br label %uniqstr16.end\l}"];
+	Node0x561809405420 -> Node0x561809404820;
+	Node0x561809404820 [shape=record,color="#b70d28ff", style=filled, fillcolor="#bb1b2c70",label="{uniqstr16.end:                                    \l  %collatz_uniqstr1.n_uniqstr16.end = phi i32 [ %uniqstr19, %uniqstr16.then ],\l... [ %uniqstr24, %uniqstr16.else ]\l  br label %uniqstr4.cond\l}"];
+	Node0x561809404820 -> Node0x561809404650;
+	Node0x561809404d00 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#b9d0f970",label="{uniqstr4.end:                                     \l  ret i32 %collatz_uniqstr1.its_uniqstr4.cond\l}"];
+	Node0x561809405f60 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#3d50c370",label="{%0:\l0:                                                \l  unreachable\l}"];
+}

@@ -53,10 +53,3 @@ class ControlFlowGraph:                  # a control flow graph is made of basic
                 b2 = self.blocks[succ]
                 b1.successors.add(b2)
                 b2.predecessors.add(b1)
-
-class IR:
-    def __init__(self, prog):           # self.prog is an entry point string + data section
-        self.prog, self.fun = prog, []  # self.fun is a list of control flow graphs (one per function)
-
-    def __repr__(self):
-        return self.prog + ''.join([str(f) for f in self.fun])

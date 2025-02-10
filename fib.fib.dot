@@ -1,0 +1,19 @@
+digraph "CFG for 'fib' function" {
+	label="CFG for 'fib' function";
+
+	Node0x55a582d6bc30 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#dedcdb70",label="{entry:\l  %retval = alloca i32, align 4\l  %n.addr = alloca i32, align 4\l  %a = alloca i32, align 4\l  %b = alloca i32, align 4\l  %i = alloca i32, align 4\l  %c = alloca i32, align 4\l  store i32 %n, ptr %n.addr, align 4\l  store i32 0, ptr %a, align 4\l  store i32 1, ptr %b, align 4\l  store i32 1, ptr %i, align 4\l  store i32 0, ptr %c, align 4\l  %0 = load i32, ptr %n.addr, align 4\l  %cmp = icmp eq i32 %0, 0\l  br i1 %cmp, label %if.then, label %if.end\l|{<s0>T|<s1>F}}"];
+	Node0x55a582d6bc30:s0 -> Node0x55a582d6c760;
+	Node0x55a582d6bc30:s1 -> Node0x55a582d6c7d0;
+	Node0x55a582d6c760 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#aec9fc70",label="{if.then:                                          \l  store i32 0, ptr %retval, align 4\l  br label %return\l}"];
+	Node0x55a582d6c760 -> Node0x55a582d6c9e0;
+	Node0x55a582d6c7d0 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#c7d7f070",label="{if.end:                                           \l  br label %while.cond\l}"];
+	Node0x55a582d6c7d0 -> Node0x55a582d6cac0;
+	Node0x55a582d6cac0 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{while.cond:                                       \l  %1 = load i32, ptr %i, align 4\l  %2 = load i32, ptr %n.addr, align 4\l  %cmp1 = icmp slt i32 %1, %2\l  br i1 %cmp1, label %while.body, label %while.end\l|{<s0>T|<s1>F}}"];
+	Node0x55a582d6cac0:s0 -> Node0x55a582d6cf10;
+	Node0x55a582d6cac0:s1 -> Node0x55a582d6cf90;
+	Node0x55a582d6cf10 [shape=record,color="#b70d28ff", style=filled, fillcolor="#bb1b2c70",label="{while.body:                                       \l  %3 = load i32, ptr %b, align 4\l  store i32 %3, ptr %c, align 4\l  %4 = load i32, ptr %a, align 4\l  %5 = load i32, ptr %b, align 4\l  %add = add i32 %4, %5\l  store i32 %add, ptr %b, align 4\l  %6 = load i32, ptr %c, align 4\l  store i32 %6, ptr %a, align 4\l  %7 = load i32, ptr %i, align 4\l  %add2 = add i32 %7, 1\l  store i32 %add2, ptr %i, align 4\l  br label %while.cond\l}"];
+	Node0x55a582d6cf10 -> Node0x55a582d6cac0;
+	Node0x55a582d6cf90 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#c7d7f070",label="{while.end:                                        \l  %8 = load i32, ptr %b, align 4\l  store i32 %8, ptr %retval, align 4\l  br label %return\l}"];
+	Node0x55a582d6cf90 -> Node0x55a582d6c9e0;
+	Node0x55a582d6c9e0 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#dedcdb70",label="{return:                                           \l  %9 = load i32, ptr %retval, align 4\l  ret i32 %9\l}"];
+}
