@@ -1,0 +1,10 @@
+digraph "CFG for 'max' function" {
+	label="CFG for 'max' function";
+
+	Node0x5597d5aa4a70 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{entry:\l  %a.addr = alloca i32, align 4\l  %b.addr = alloca i32, align 4\l  %result = alloca i32, align 4\l  store i32 %a, ptr %a.addr, align 4\l  store i32 %b, ptr %b.addr, align 4\l  %0 = load i32, ptr %a.addr, align 4\l  store i32 %0, ptr %result, align 4\l  %1 = load i32, ptr %b.addr, align 4\l  %2 = load i32, ptr %a.addr, align 4\l  %cmp = icmp sgt i32 %1, %2\l  br i1 %cmp, label %if.then, label %if.end\l|{<s0>T|<s1>F}}"];
+	Node0x5597d5aa4a70:s0 -> Node0x5597d5aa6bf0;
+	Node0x5597d5aa4a70:s1 -> Node0x5597d5aa6c40;
+	Node0x5597d5aa6bf0 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#f59c7d70",label="{if.then:                                          \l  %3 = load i32, ptr %b.addr, align 4\l  store i32 %3, ptr %result, align 4\l  br label %if.end\l}"];
+	Node0x5597d5aa6bf0 -> Node0x5597d5aa6c40;
+	Node0x5597d5aa6c40 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{if.end:                                           \l  %4 = load i32, ptr %result, align 4\l  ret i32 %4\l}"];
+}

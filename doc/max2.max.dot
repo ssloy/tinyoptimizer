@@ -1,0 +1,10 @@
+digraph "CFG for 'max' function" {
+	label="CFG for 'max' function";
+
+	Node0x55ca0eb65880 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{entry:\l  %cmp = icmp sgt i32 %b, %a\l  br i1 %cmp, label %if.then, label %if.end\l|{<s0>T|<s1>F}}"];
+	Node0x55ca0eb65880:s0 -> Node0x55ca0eb67070;
+	Node0x55ca0eb65880:s1 -> Node0x55ca0eb670e0;
+	Node0x55ca0eb67070 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#f59c7d70",label="{if.then:                                          \l  br label %if.end\l}"];
+	Node0x55ca0eb67070 -> Node0x55ca0eb670e0;
+	Node0x55ca0eb670e0 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{if.end:                                           \l  %result.0 = phi i32 [ %b, %if.then ], [ %a, %entry ]\l  ret i32 %result.0\l}"];
+}

@@ -1,0 +1,12 @@
+digraph "CFG for 'loop' function" {
+	label="CFG for 'loop' function";
+
+	Node0x5597d5aa7030 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#b9d0f970",label="{entry:\l  %i = alloca i32, align 4\l  store i32 0, ptr %i, align 4\l  br label %while.cond\l}"];
+	Node0x5597d5aa7030 -> Node0x5597d5aa72b0;
+	Node0x5597d5aa72b0 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{while.cond:                                       \l  %0 = load i32, ptr %i, align 4\l  %cmp = icmp slt i32 %0, 10\l  br i1 %cmp, label %while.body, label %while.end\l|{<s0>T|<s1>F}}"];
+	Node0x5597d5aa72b0:s0 -> Node0x5597d5aa7510;
+	Node0x5597d5aa72b0:s1 -> Node0x5597d5aa7590;
+	Node0x5597d5aa7510 [shape=record,color="#b70d28ff", style=filled, fillcolor="#bb1b2c70",label="{while.body:                                       \l  %1 = load i32, ptr %i, align 4\l  %inc = add nsw i32 %1, 1\l  store i32 %inc, ptr %i, align 4\l  br label %while.cond, !llvm.loop !2\l}"];
+	Node0x5597d5aa7510 -> Node0x5597d5aa72b0;
+	Node0x5597d5aa7590 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#b9d0f970",label="{while.end:                                        \l  %2 = load i32, ptr %i, align 4\l  ret i32 %2\l}"];
+}
